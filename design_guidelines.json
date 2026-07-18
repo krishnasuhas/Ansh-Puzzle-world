@@ -1,0 +1,166 @@
+{
+  "app_name": "Ansh's Puzzle World",
+  "personality": "4 Tactile / Playful LIGHT",
+  "personality_one_liner": "A soft, tactile, and joyful baby-blue and cream puzzle playground filled with bouncy interactions and cute memories.",
+  "color": {
+    "surface": "#FDFBF7",
+    "onSurface": "#2A3B45",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#2A3B45",
+    "surfaceTertiary": "#F0F4F8",
+    "onSurfaceTertiary": "#2A3B45",
+    "surfaceInverse": "#1A2F38",
+    "onSurfaceInverse": "#FDFBF7",
+    "brand": "#AEC6CF",
+    "brandPrimary": "#96B8C5",
+    "onBrandPrimary": "#0A1F28",
+    "brandSecondary": "#FCEB9C",
+    "onBrandSecondary": "#4A3B05",
+    "brandTertiary": "#E2EDF2",
+    "onBrandTertiary": "#1A2F38",
+    "success": "#A5D6A7",
+    "onSuccess": "#1B5E20",
+    "warning": "#FFD54F",
+    "onWarning": "#3E2723",
+    "error": "#EF9A9A",
+    "onError": "#4A0E0E",
+    "info": "#90CAF9",
+    "onInfo": "#0D47A1",
+    "border": "#E8E2D9",
+    "borderStrong": "#D1C7B8"
+  },
+  "typography": {
+    "displayFontFamily": "Fredoka",
+    "textFontFamily": "Nunito",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24,
+      "3xl": 32
+    }
+  },
+  "spacing": {
+    "rule": "Use generous tactile padding. Cards and buttons should feel chunky and touchable. Never let elements touch screen edges directly.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "pill": 999
+  },
+  "shadow_tier": "2",
+  "navigation": "stack_only",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": "false",
+    "do's": ["Use subtle brand-tinted backgrounds or solid cards. Playful personality favors solid tactile shapes over blur."],
+    "dont's": ["Do not use blur or glassmorphism. Keep it soft, solid, and touchable."]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Welcome",
+      "purpose": "A joyful splash/landing screen welcoming the player to Ansh's Puzzle World.",
+      "states": {
+        "loading": "Centered soft pulsing baby-blue puzzle piece.",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "Safe area container. Large hero text 'Ansh's Puzzle World' in Fredoka (3xl) centered at the top. Below it, a playful 2x2 grid of floating baby photos acting as a decorative hero visual. At the bottom, a sticky, oversized pill-shaped 'Play Now' button in brandPrimary."
+    },
+    {
+      "name": "Setup",
+      "purpose": "Allow the player to pick a photo, choose grid size, and select game mode.",
+      "states": {
+        "loading": "Skeleton of the photo grid.",
+        "empty": "N/A",
+        "error": "Error fetching gallery photos, show a retry button."
+      },
+      "layout": "Scrollable setup flow. Section 1: 'Pick a Photo' - A horizontal scrollable row or a wrapped flex row showing the 5 built-in Ansh photos as rounded square cards (radius lg), plus one card at the start acting as the 'Pick from Gallery' button (brandTertiary surface with an Image/Camera icon). Selected photo gets a borderStrong highlight. Section 2: 'Difficulty' - A tactile segmented control or two large side-by-side cards for '3x3 (Easy)' and '4x4 (Hard)'. Section 3: 'Mode' - Two side-by-side cards for 'Relaxed' and 'Timed'. Sticky bottom container with 'Start Puzzle' button."
+    },
+    {
+      "name": "Game",
+      "purpose": "The main puzzle gameplay board where players slide tiles.",
+      "states": {
+        "loading": "Spinner over a placeholder grid.",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "Top Header: Back button (left), 'Moves: 0' (center), and Timer (right). The center of the screen contains the Puzzle Board: A fixed-aspect square container (surfaceSecondary, radius lg, subtle shadow). Inside, tiles are positioned absolutely with Reanimated layout transitions. Tiles must display segments of the selected image. Bottom: A 'Restart' or 'Shuffle' button in brandTertiary."
+    },
+    {
+      "name": "WinCelebration",
+      "purpose": "Celebrate the completion of the puzzle with stats and confetti.",
+      "states": {
+        "loading": "N/A",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "Full-screen modal or overlay. Background is a soft solid surface. A Lottie confetti animation plays automatically. Big 'Yay!' or 'Puzzle Solved!' text. Below, large tactile stat cards showing 'Moves Taken' and 'Time'. Bottom: 'Play Again' (brandPrimary) and 'Main Menu' (surfaceSecondary) buttons."
+    }
+  ],
+  "images": {
+    "ansh_photo_1": {
+      "url": "https://images.unsplash.com/photo-1444318226545-dfd6106d7ec4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxjdXRlJTIwbmV3Ym9ybiUyMGJhYnklMjBib3l8ZW58MHx8fHwxNzg0Mzc3NDIxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "baby in brown swaddle"
+    },
+    "ansh_photo_2": {
+      "url": "https://images.unsplash.com/photo-1732490451492-a05ed556deb8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHw0fHxjdXRlJTIwbmV3Ym9ybiUyMGJhYnklMjBib3l8ZW58MHx8fHwxNzg0Mzc3NDIxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "A baby is sleeping on a white blanket"
+    },
+    "ansh_photo_3": {
+      "url": "https://images.unsplash.com/photo-1524808533204-cda7fe65ff05?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxjdXRlJTIwbmV3Ym9ybiUyMGJhYnklMjBib3l8ZW58MHx8fHwxNzg0Mzc3NDIxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "pruning topless baby"
+    },
+    "ansh_photo_4": {
+      "url": "https://images.unsplash.com/photo-1610901137736-d7cc46657b11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxjdXRlJTIwbmV3Ym9ybiUyMGJhYnklMjBib3l8ZW58MHx8fHwxNzg0Mzc3NDIxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "baby lying on blue textile"
+    },
+    "ansh_photo_5": {
+      "url": "https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxjdXRlJTIwbmFieSUyMGJveXxlbnwwfHx8fDE3ODQzNzc0MjF8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "cute baby boy wrapped"
+    },
+    "welcome_hero_bg": {
+      "url": "https://images.unsplash.com/photo-1610901137736-d7cc46657b11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxjdXRlJTIwbmV3Ym9ybiUyMGJhYnklMjBib3l8ZW58MHx8fHwxNzg0Mzc3NDIxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Baby blue backdrop"
+    }
+  },
+  "haptics": {
+    "primary_button_press": "impactLight",
+    "tile_slide": "impactLight",
+    "puzzle_solve": "notificationSuccess",
+    "setup_toggle_select": "selection"
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the 'Tactile / Playful LIGHT' personality constraints: soft borders, pill buttons, heavy rounded typography (Fredoka), and generous padding. No sharp corners.",
+    "Do NOT use any blue/purple that resembles corporate tech (e.g. #007AFF). Use only the pastel baby-blues provided in the palette (brand: #AEC6CF, brandPrimary: #96B8C5) coupled with the deep ink (onBrandPrimary: #0A1F28) for high contrast readability.",
+    "Ensure 'Ansh's Puzzle World' uses the Fredoka font for the title. Nunito for all UI elements.",
+    "Photo Picker Setup: Provide the 5 built-in Unsplash URLs exactly as configured in the 'images' object. Add a dedicated 'Pick from Gallery' tile using expo-image-picker. The user's choice (either built-in or gallery URI) should be passed into the game screen route params.",
+    "Puzzle Board Mechanic: You must calculate tile dimensions mathematically based on container width minus padding. The tiles should just be 'expo-image' components that use absolute positioning and standard React Native overflow/masking techniques or a custom mapped crop (if supported). Alternatively, since cutting a native image into puzzle pieces is complex in pure React Native without native modules, consider using 'expo-image' with a specific 'contentPosition' and 'contentFit=cover' to simulate the cropped piece, or wrap the image in an absolutely positioned View with 'overflow: hidden' and translate the image inside it negatively.",
+    "Sliding Animation: Use react-native-reanimated for smooth 0.15s transitions when a tile's top/left values change.",
+    "Implement 'Relaxed' vs 'Timed' mode: Relaxed just counts Moves, or counts Time UP. Timed Mode should count Time DOWN from a reasonable difficulty baseline (e.g., 3 mins for 3x3, 5 mins for 4x4) and result in a 'Game Over' modal if it hits 0.",
+    "Celebrate: Include expo-haptics (notificationSuccess) and lottie-react-native confetti when the final tile slides into place.",
+    "Maintain WCAG AA readability: all text on the pastel surfaces must use the deep #2A3B45 or #0A1F28 colors.",
+    "Do not use generic UI emojis. Stick to Phosphor icons (filled/rounded variants match the playful vibe)."
+  ]
+}
