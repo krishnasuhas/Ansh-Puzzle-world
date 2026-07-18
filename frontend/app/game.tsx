@@ -26,7 +26,7 @@ function formatTime(sec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-const TIMED_BASELINE: Record<number, number> = { 3: 180, 4: 300 };
+const TIMED_BASELINE: Record<number, number> = { 2: 90, 3: 180, 4: 300 };
 
 export default function Game() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function Game() {
     photoId: string;
     photoUri: string;
   }>();
-  const n = params.grid === "4" ? 4 : 3;
+  const n = params.grid === "4" ? 4 : params.grid === "2" ? 2 : 3;
   const mode = params.mode === "timed" ? "timed" : "relaxed";
   const photoId = params.photoId || "ansh_1";
   const photoUri = params.photoUri || "";

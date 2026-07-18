@@ -48,29 +48,34 @@ function isSolved(tiles: number[]): boolean {
   return tiles.every((v, i) => v === i);
 }
 
-// Fisher-free solvable shuffle: apply many random legal moves from solved.
+// Solvable shuffle via a random walk of legal moves from the solved state.
 function makeShuffled(n: number): number[] {
   const total = n * n;
   const tiles = Array.from({ length: total }, (_, i) => i);
   let empty = total - 1;
-  let prev = -1;
-  const moves = total * total * 6;
-  for (let i = 0; i < moves; i++) {
-    const neighbors: number[] = [];
-    const r = Math.floor(empty / n);
-    const c = empty % n;
-    if (r > 0) neighbors.push(empty - n);
-    if (r < n - 1) neighbors.push(empty + n);
-    if (c > 0) neighbors.push(empty - 1);
-    if (c < n - 1) neighbors.push(empty + 1);
-    const options = neighbors.filter((x) => x !== prev);
-    const pick = options[Math.floor(Math.random() * options.length)];
-    [tiles[empty], tiles[pick]] = [tiles[pick], tiles[empty]];
-    prev = empty;
-    empty = pick;
+
+  const step = (count: number) => {
+    for (let i = 0; i < count; i++) {
+      const r = Math.floor(empty / n);
+      const c = empty % n;
+      const neighbors: number[] = [];
+      if (r > 0) neighbors.push(empty - n);
+      if (r < n - 1) neighbors.push(empty + n);
+      if (c > 0) neighbors.push(empty - 1);
+      if (c < n - 1) neighbors.push(empty + 1);
+      const pick = neighbors[Math.floor(Math.random() * neighbors.length)];
+      [tiles[empty], tiles[pick]] = [tiles[pick], tiles[empty]];
+      empty = pick;
+    }
+  };
+
+  step(total * total * 8);
+  // Nudge off the solved state without recursion.
+  let guard = 0;
+  while (isSolved(tiles) && guard < 30) {
+    step(n + 1);
+    guard++;
   }
-  // Extremely unlikely to be solved, but guard anyway.
-  if (isSolved(tiles)) return makeShuffled(n);
   return tiles;
 }
 

@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ANSH_PHOTOS } from "@/src/photos";
 import { colors, font, fontSize, radius, shadow, spacing } from "@/src/theme";
 
-type Grid = 3 | 4;
+type Grid = 2 | 3 | 4;
 type Mode = "relaxed" | "timed";
 
 export default function Setup() {
@@ -182,6 +182,19 @@ export default function Setup() {
           <Text style={styles.sectionTitle}>Difficulty</Text>
           <View style={styles.row}>
             <OptionCard
+              compact
+              testID="grid-2-option"
+              selected={grid === 2}
+              onPress={() => {
+                tap();
+                setGrid(2);
+              }}
+              icon="apps-outline"
+              title="2 x 2"
+              subtitle="Easy"
+            />
+            <OptionCard
+              compact
               testID="grid-3-option"
               selected={grid === 3}
               onPress={() => {
@@ -190,9 +203,10 @@ export default function Setup() {
               }}
               icon="grid-outline"
               title="3 x 3"
-              subtitle="Easy · 9 pieces"
+              subtitle="Medium"
             />
             <OptionCard
+              compact
               testID="grid-4-option"
               selected={grid === 4}
               onPress={() => {
@@ -201,7 +215,7 @@ export default function Setup() {
               }}
               icon="grid"
               title="4 x 4"
-              subtitle="Hard · 16 pieces"
+              subtitle="Hard"
             />
           </View>
         </View>
@@ -254,6 +268,7 @@ function OptionCard({
   title,
   subtitle,
   testID,
+  compact,
 }: {
   selected: boolean;
   onPress: () => void;
@@ -261,16 +276,21 @@ function OptionCard({
   title: string;
   subtitle: string;
   testID: string;
+  compact?: boolean;
 }) {
   return (
     <Pressable
       testID={testID}
       onPress={onPress}
-      style={[styles.optionCard, selected && styles.optionCardSelected]}
+      style={[
+        styles.optionCard,
+        compact && styles.optionCardCompact,
+        selected && styles.optionCardSelected,
+      ]}
     >
       <Ionicons
         name={icon}
-        size={28}
+        size={compact ? 24 : 28}
         color={selected ? colors.onBrandPrimary : colors.brandPrimary}
       />
       <Text style={[styles.optionTitle, selected && styles.optionTitleSelected]}>
@@ -370,6 +390,11 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     alignItems: "flex-start",
     ...shadow.card,
+  },
+  optionCardCompact: {
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.md,
+    alignItems: "center",
   },
   optionCardSelected: {
     backgroundColor: colors.brand,
