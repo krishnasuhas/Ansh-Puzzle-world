@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Confetti from "@/src/components/Confetti";
 import PuzzleBoard, { PuzzleBoardHandle } from "@/src/components/PuzzleBoard";
 import { saveScore } from "@/src/api";
-import { getPhotoSource } from "@/src/photos";
+import { ANSH_PHOTOS, getPhotoSource } from "@/src/photos";
 import { colors, font, fontSize, radius, shadow, spacing } from "@/src/theme";
 
 function formatTime(sec: number): string {
@@ -41,8 +41,8 @@ export default function Game() {
   }>();
   const n = params.grid === "4" ? 4 : params.grid === "2" ? 2 : 3;
   const mode = params.mode === "timed" ? "timed" : "relaxed";
-  const photoId = params.photoId || "ansh_1";
-  const photoUri = params.photoUri || "";
+  const [photoId, setPhotoId] = useState(params.photoId || "ansh_1");
+  const [photoUri, setPhotoUri] = useState(params.photoUri || "");
   const source = getPhotoSource(photoId, photoUri);
 
   const boardSize = Math.min(width - spacing.xl * 2, 420);
@@ -108,6 +108,21 @@ export default function Game() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     }
+    savedRef.current = false;
+    setMoves(0);
+    setSeconds(mode === "timed" ? TIMED_BASELINE[n] : 0);
+    setStatus("playing");
+    boardRef.current?.shuffle();
+  };
+
+  const playNext = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
+    const currentIndex = ANSH_PHOTOS.findIndex((p) => p.id === photoId);
+    const next = ANSH_PHOTOS[(currentIndex + 1) % ANSH_PHOTOS.length];
+    setPhotoId(next.id);
+    setPhotoUri("");
     savedRef.current = false;
     setMoves(0);
     setSeconds(mode === "timed" ? TIMED_BASELINE[n] : 0);
@@ -205,9 +220,9 @@ export default function Game() {
               <StatChip icon="footsteps" label="Moves" value={String(moves)} />
               <StatChip icon="time" label="Time" value={formatTime(finishedTime)} />
             </View>
-            <Pressable testID="play-again-button" onPress={restart} style={styles.primaryBtn}>
-              <Ionicons name="refresh" size={20} color={colors.onBrandPrimary} />
-              <Text style={styles.primaryText}>Play Again</Text>
+            <Pressable testID="play-next-button" onPress={playNext} style={styles.primaryBtn}>
+              <Ionicons name="arrow-forward" size={20} color={colors.onBrandPrimary} />
+              <Text style={styles.primaryText}>Play Next</Text>
             </Pressable>
             <Pressable
               testID="main-menu-button"
