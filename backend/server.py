@@ -1,14 +1,14 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Query
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
-import uuid
-from datetime import datetime
+from pydantic import BaseModel, Field, BeforeValidator
+from typing import List, Optional, Annotated
+from bson import ObjectId
+from datetime import datetime, timezone
 
 
 ROOT_DIR = Path(__file__).parent
@@ -19,40 +19,92 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI()
-
-# Create a router with the /api prefix
+app = FastAPI(title="Ansh's Puzzle World API")
 api_router = APIRouter(prefix="/api")
 
 
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+# ---- Mongo helpers ----
+def _validate_object_id(v):
+    if isinstance(v, ObjectId):
+        return str(v)
+    return str(v)
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
 
-# Add your routes to the router instead of directly to app
+PyObjectId = Annotated[str, BeforeValidator(_validate_object_id)]
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+# ---- Models ----
+class ScoreCreate(BaseModel):
+    grid: int
+    mode: str            # "relaxed" | "timed"
+    photo_id: str
+    moves: int
+    time_seconds: int
+
+
+class Score(BaseModel):
+    id: PyObjectId = Field(alias="_id")
+    grid: int
+    mode: str
+    photo_id: str
+    moves: int
+    time_seconds: int
+    created_at: str
+
+    class Config:
+        populate_by_name = True
+
+
+class BestScore(BaseModel):
+    grid: int
+    mode: str
+    best_moves: Optional[int] = None
+    best_time_seconds: Optional[int] = None
+    plays: int = 0
+
+
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Ansh's Puzzle World API is running"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+@api_router.post("/scores", response_model=Score)
+async def create_score(payload: ScoreCreate):
+    doc = payload.model_dump()
+    doc["created_at"] = _now_iso()
+    result = await db.scores.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return Score(**doc)
 
-# Include the router in the main app
+
+@api_router.get("/scores/best", response_model=BestScore)
+async def best_score(grid: int = Query(...), mode: str = Query(...)):
+    cursor = db.scores.find({"grid": grid, "mode": mode})
+    scores = await cursor.to_list(2000)
+    if not scores:
+        return BestScore(grid=grid, mode=mode)
+    best_moves = min(s["moves"] for s in scores)
+    best_time = min(s["time_seconds"] for s in scores)
+    return BestScore(
+        grid=grid,
+        mode=mode,
+        best_moves=best_moves,
+        best_time_seconds=best_time,
+        plays=len(scores),
+    )
+
+
+@api_router.get("/scores/recent", response_model=List[Score])
+async def recent_scores(limit: int = 10):
+    cursor = db.scores.find().sort("created_at", -1).limit(limit)
+    scores = await cursor.to_list(limit)
+    return [Score(**s) for s in scores]
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -63,12 +115,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

@@ -10,15 +10,19 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.anshpuzzlejoy.pje9k0"
+      "bundleIdentifier": "com.emergent.anshpuzzlejoy.pje9k0",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Use your own photos to build a puzzle"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#AEC6CF"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.emergent.anshpuzzlejoy.pje9k0"
+      "package": "com.emergent.anshpuzzlejoy.pje9k0",
+      "permissions": ["READ_MEDIA_IMAGES"]
     },
     "web": {
       "bundler": "metro",
@@ -27,13 +31,20 @@
     },
     "plugins": [
       "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Use your own photos to build a puzzle"
+        }
+      ],
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-image.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#000000"
+          "backgroundColor": "#E2EDF2"
         }
       ]
     ],

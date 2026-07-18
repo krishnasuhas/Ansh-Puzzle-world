@@ -1,0 +1,33 @@
+{
+  "summary": "First iteration test of Ansh's Puzzle World. Backend: 8/8 pytest tests passed against public URL for GET /api/, POST /api/scores (relaxed+timed), GET /api/scores/best (populated and empty combo), GET /api/scores/recent (default + limit), and 422 validation. Frontend (mobile viewport 375x667): welcome screen title present, play-now-button navigates to setup, all photo testIDs (photo-ansh_1..5, pick-gallery-button), difficulty (grid-3-option, grid-4-option) and mode (mode-relaxed-option, mode-timed-option) options visible; start-puzzle-button navigates to game; puzzle-board renders 8 tiles for 3x3 (empty tile correctly hidden); tapping a tile adjacent to the empty slot increments the moves-counter (verified moves went 0->3); timer-display updates every second in relaxed mode; shuffle-button resets moves to 0; game-back-button returns to setup; 4x4 grid game boots cleanly. No red screens or fatal errors. Minor: 'shadow*' style props deprecation warning from react-native-web appears in console (non-blocking).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "shadow* style props", "issue": "react-native-web logs deprecation warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' Coming from src/theme shadow tokens applied via ...shadow.card / ...shadow.soft. Non-blocking on native; consider migrating to boxShadow-compatible tokens for web preview cleanliness. Reference: /app/frontend/src/theme.ts (shadow.card, shadow.soft)"}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_puzzle_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "(Optional cleanup) Replace deprecated shadow* style props in theme with boxShadow-compatible values or platform-guard for web to silence RN-web warnings."
+  ],
+  "critical_code_review_comments": [
+    "server.py: POST /api/scores returns 200 (fine), consider 201 for resource creation.",
+    "server.py: GET /api/scores/best computes best_moves and best_time_seconds independently across scores (min of each separately) — this is by design per spec but note best_moves and best_time_seconds may come from different plays. Acceptable for this simple app.",
+    "PuzzleBoard.tsx: makeShuffled does a random-walk shuffle from solved which guarantees solvability. Good.",
+    "game.tsx: saveScore fire-and-forget on win — errors are only console-logged. Acceptable for this app.",
+    "api.ts: uses process.env.EXPO_PUBLIC_BACKEND_URL correctly."
+  ],
+  "updated_files": ["/app/backend/tests/test_puzzle_api.py", "/app/test_reports/iteration_1.json"],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "Test class created a few TEST scores in MongoDB (grid=3 relaxed and grid=4 timed) via POST /api/scores. Not cleaned up — safe as this is a fresh test db and endpoint has no auth.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend at EXPO_PUBLIC_BACKEND_URL, pytest suite in /app/backend/tests/test_puzzle_api.py covers all endpoints. Frontend testIDs verified: play-now-button, setup-back-button, photo-ansh_1..5, pick-gallery-button, grid-3-option, grid-4-option, mode-relaxed-option, mode-timed-option, start-puzzle-button, puzzle-board, puzzle-tile-<goal>, moves-counter, timer-display, shuffle-button, game-back-button, win-overlay, play-again-button, main-menu-button, lose-overlay, try-again-button, lose-menu-button. Auto-solving the puzzle to reach win-overlay is impractical; solve mechanic + counter + shuffle verified instead per instructions. Gallery pick requires native permission (expo-image-picker) and won't function in web preview — expected.",
+  "rca_of_issue": "N/A - no bugs found this iteration."
+}
